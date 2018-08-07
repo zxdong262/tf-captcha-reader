@@ -1,5 +1,5 @@
 '''
-simple single color image with text recognition
+text recognition: random char image
 '''
 
 from PIL import Image, ImageDraw, ImageFont
@@ -20,7 +20,7 @@ def buildDic(arr):
 
 CHAR_POOL = list(range(97, 123)) + list(range(65, 91)) + list(range(48, 58))
 CHAR_DIC, CHAR_INDEX_DIC = buildDic(CHAR_POOL)
-SIZE = (30, 30)
+SIZE = (28, 28)
 
 def randomChar():
   '''
@@ -40,32 +40,15 @@ def rgb2int(arr):
   B = arr[2]
   return R * 299/1000 + G * 587/1000 + B * 114/1000
 
-# def reshapeArray(arr):
-#   '''
-#   reshape data array, convert all rgb array to int
-#   '''
-#   x = len(arr)
-#   y = len(arr[0])
-#   z = len(arr[0][0])
-#   res = []
-#   def mapper(x):
-#     return np.array(
-#       map(mapper1, x)
-#     )
-#   def mapper(x):
-#     return np.array(
-#       map(mapper1, x)
-#     )
-#   return np.array(
-#     map(mapper, arr)
-#   )
-
 def createImg(i):
   '''
   create random captcha image dataarray.
   '''
   BG_COLOR = (0, 0, 0)
-  TEXT_COLOR = (255, 255, 255)
+  R = np.random.randint(60, 190)
+  G = np.random.randint(60, 190)
+  B = np.random.randint(60, 190)
+  TEXT_COLOR = (R, G, B)
 
   TEXT_POS = (np.random.randint(1, 10), np.random.randint(1, 10))
   fontSize = 18
@@ -85,7 +68,6 @@ def createImg(i):
     )
   arr1 = np.array(arr1) / 255.0
   arr1 = arr1.reshape(SIZE)
-  arr1 = arr1
 
   if i == 0:
     img.save('example.png')
@@ -108,8 +90,8 @@ def main():
 
   print('tensorflow version:', tf.__version__)
 
-  (trainData, trainLabels) = createData(1000)
-  (testData, testLabels) = createData(124)
+  (trainData, trainLabels) = createData(10000)
+  (testData, testLabels) = createData(1000)
 
   model = keras.Sequential([
     keras.layers.Flatten(input_shape=SIZE),
