@@ -3,7 +3,7 @@ captcha image generator
 '''
 from PIL import Image, ImageDraw, ImageFont
 import numpy as np
-from imageGrouping import imageGroup
+from .imageGrouping import imageSplit
 
 def buildDic(arr):
   dicc = {}
@@ -94,7 +94,7 @@ def main():
   img = createImg(0)
   image, txt = img
   print(txt)
-  imageGroup(image, charCount=len(txt), shouldSaveExample=True)
+  imageSplit(image, charCount=len(txt), shouldSaveExample=True)
 
 if __name__ == '__main__':
   main()

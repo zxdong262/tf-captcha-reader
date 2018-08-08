@@ -1,34 +1,18 @@
 '''
-text recognition: random char image
-'''
+captcha reader demo
 
-from PIL import Image, ImageDraw, ImageFont
-import numpy as np
+captcha with 4 or 5 char, random color for every char, random rotate some degree, see `example-images/example-captcha.png`
+make it binary, see `example-images/example-binary.png`
+use opencv findcontontours to cut out every char image, see `example-images/example-split-*.png`
+then use tensorflow to train and read the test images
+
+'''
 import tensorflow as tf
 from tensorflow import keras
-from functools import reduce
-
-def buildDic(arr):
-  dicc = {}
-  dicc1 = {}
-  for i in range(len(arr)):
-    ii = arr[i]
-    cc = chr(ii)
-    dicc[i] = cc
-    dicc1[cc] = i
-  return dicc, dicc1
-
-CHAR_POOL = list(range(97, 123)) + list(range(65, 91)) + list(range(48, 58))
-CHAR_DIC, CHAR_INDEX_DIC = buildDic(CHAR_POOL)
-SIZE = (28, 28)
-
-def randomChar():
-  '''
-  return random char [a-zA-Z0-9]
-  '''
-  count = len(CHAR_POOL)
-  n = np.random.randint(0, count)
-  return chr(CHAR_POOL[n])
+import numpy as np
+from PIL import Image
+from img.imageGenerator import createImg, TEXT_IMAGE_SIZE, CHAR_POOL, CHAR_INDEX_DIC
+from img.imageGrouping import imageSplit
 
 def rgb2int(arr):
   '''
@@ -40,38 +24,35 @@ def rgb2int(arr):
   B = arr[2]
   return R * 299/1000 + G * 587/1000 + B * 114/1000
 
-def createImg(i):
+def convertToDataArray(img, shouldSave=False):
   '''
-  create random captcha image dataarray.
+  convert image to data array
+  and resize to 28*28
   '''
-  BG_COLOR = (0, 0, 0)
-  R = np.random.randint(60, 190)
-  G = np.random.randint(60, 190)
-  B = np.random.randint(60, 190)
-  TEXT_COLOR = (R, G, B)
+  BG_COLOR = (255, 255, 255)
+  base = img = Image.new('RGB', TEXT_IMAGE_SIZE, color = BG_COLOR)
+  img.convert('RGB')
+  size = img.size
+  left = int((TEXT_IMAGE_SIZE[0] - size[0]) / 2)
+  top = int((TEXT_IMAGE_SIZE[1] - size[1]) / 2)
+  if left < 0: left = 0
+  if top < 0: top = 0
+  base.paste(img, box=(left, top))
 
-  TEXT_POS = (np.random.randint(1, 10), np.random.randint(1, 10))
-  fontSize = 18
-
-  img = Image.new('RGB', SIZE, color = BG_COLOR)
-  font = ImageFont.truetype('./node_modules/open-sans-fonts/open-sans/Regular/OpenSans-Regular.ttf', size=fontSize)
-  d = ImageDraw.Draw(img)
-  char = randomChar()
-  d.text(TEXT_POS, char, fill=TEXT_COLOR, font=font)
-  arr = np.array(img)
-  arr = arr.reshape((SIZE[0] * SIZE[1], 3))
+  if shouldSave:
+    base.save('example-resized-char.png')
+  arr = np.array(base)
+  arr = arr.reshape((TEXT_IMAGE_SIZE[0] * TEXT_IMAGE_SIZE[1], 3))
   arr1 = []
   for x in range(len(arr)):
     a = arr[x]
     arr1.append(
       rgb2int(a)
     )
-  arr1 = np.array(arr1) / 255.0
-  arr1 = arr1.reshape(SIZE)
+  arr1 = (255 - np.array(arr1)) / 255.0
+  arr1 = arr1.reshape(TEXT_IMAGE_SIZE)
+  return arr1
 
-  if i == 0:
-    img.save('example.png')
-  return (arr1, CHAR_INDEX_DIC[char])
 
 def createData(n):
   '''
@@ -80,9 +61,21 @@ def createData(n):
   data = []
   labels = []
   for i in range(n):
-    (arr, char) = createImg(i)
-    data.append(arr)
-    labels.append(char)
+    (img, text) = createImg(i)
+    tlist = list(text)
+    le = len(tlist)
+    shouldSave = i == 0
+    imgs = imageSplit(img, charCount=le, shouldSaveExample=shouldSave)
+    for j in range(len(imgs)):
+      im = imgs[j]
+      shouldSaveEg = j == 0 and shouldSave
+      data.append(
+        convertToDataArray(im, shouldSave=shouldSaveEg)
+      )
+    tlist = list(
+      map(lambda x: CHAR_INDEX_DIC[x], tlist)
+    )
+    labels = labels + tlist
   return (np.array(data), np.array(labels))
 
 def main():
@@ -90,11 +83,11 @@ def main():
 
   print('tensorflow version:', tf.__version__)
 
-  (trainData, trainLabels) = createData(10000)
+  (trainData, trainLabels) = createData(5000)
   (testData, testLabels) = createData(1000)
 
   model = keras.Sequential([
-    keras.layers.Flatten(input_shape=SIZE),
+    keras.layers.Flatten(input_shape=TEXT_IMAGE_SIZE),
     keras.layers.Dense(128, activation=tf.nn.relu),
     keras.layers.Dense(len(CHAR_POOL), activation=tf.nn.softmax)
   ])

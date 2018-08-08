@@ -63,10 +63,10 @@ def removeSmallShapesForce(shapes):
     height = shape[2][0][1] - shape[0][0][1]
     if height > SMALL:
       res.append(shape)
-  if len(res) < len(shapes):
-    print(
-      'force remove small ones:', len(shapes) - len(res)
-    )
+  # if len(res) < len(shapes):
+  #   # print(
+  #   #   'force remove small ones:', len(shapes) - len(res)
+  #   # )
   return res
 
 def removeSmallShapes(shapes, count):
@@ -137,10 +137,10 @@ def getExternalBoxs(contours, charCount = None):
   #length = len(res)
   res = removeSmallShapesForce(res)
   if charCount and len(res) > charCount:
-    print('remove small shapes')
+    # print('remove small shapes')
     res = removeSmallShapes(res, len(res) - charCount)
   elif charCount and len(res) < charCount:
-    print('splitShapes')
+    # print('splitShapes')
     res = splitShapes(res, charCount - len(res))
 
   return res
@@ -234,7 +234,7 @@ def removeInnerBox(arr):
       res.append(a)
   return res
 
-def imageGroup(image, charCount=None, shouldSaveExample=False):
+def imageSplit(image, charCount=None, shouldSaveExample=False):
   '''
   use openCV.findContours to seprate charactors
   '''
@@ -257,7 +257,7 @@ def imageGroup(image, charCount=None, shouldSaveExample=False):
   if shouldSaveExample:
     c1 = np.array(c01)
     copy1 = deepcopy(imgCopy)
-    print(len(c1))
+    # print(len(c1))
     cv2.drawContours(copy1, c1, -1, (67,189,66), 1)
     x2 = Image.fromarray(copy1)
     x2.save('example-findContours.png')
@@ -273,7 +273,6 @@ def imageGroup(image, charCount=None, shouldSaveExample=False):
     w = shape[2][0][0]
     h = shape[2][0][1]
     box = (x, y, w, h)
-    print(box)
     im2 = im2.crop(box)
     im2.load()
     res.append(im2)
