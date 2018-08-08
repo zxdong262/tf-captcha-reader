@@ -88,16 +88,7 @@ def createImg(i):
     txt = txt + char
     img.paste(textImg, box=computePastePos(j), mask=textImg)
 
-  #img = img.convert('RGB')
   return img, txt
-
-
-# def splitImage(image, charCount=None, shouldSaveExample=False):
-#   '''
-#   split image to single char image ndarray data
-#   '''
-
-#   imageGroup(image)
 
 def main():
   img = createImg(0)

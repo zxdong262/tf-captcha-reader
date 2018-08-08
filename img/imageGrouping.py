@@ -10,7 +10,9 @@ from scipy.misc import bytescale
 from copy import deepcopy
 from math import pow
 
+TEXT_IMAGE_SIZE = (28, 28)
 EDGE = 5
+SMALL = 3
 
 def getMinMax(arr):
   '''
@@ -51,6 +53,22 @@ def sortShapes(shape):
   height = shape[2][0][1] - shape[0][0][1]
   return pow(width, 2) + pow(height, 2)
 
+def removeSmallShapesForce(shapes):
+  '''
+  force remove the small ones
+  '''
+  res = []
+  for i in range(len(shapes)):
+    shape = shapes[i]
+    height = shape[2][0][1] - shape[0][0][1]
+    if height > SMALL:
+      res.append(shape)
+  if len(res) < len(shapes):
+    print(
+      'force remove small ones:', len(shapes) - len(res)
+    )
+  return res
+
 def removeSmallShapes(shapes, count):
   '''
   remove extra unrecognized shapes,
@@ -68,7 +86,7 @@ def splitShape(shape):
   '''
   minX = shape[0][0][0]
   maxX = shape[2][0][0]
-  hx = maxX/2 + minX/2
+  hx = int(maxX/2 + minX/2)
   minY = shape[0][0][1]
   maxY = shape[2][0][1]
   return [
@@ -116,11 +134,14 @@ def getExternalBoxs(contours, charCount = None):
     res.append(ps)
   res = removeInnerBox(res)
   res = concatShapes(res)
-  length = len(res)
-  if charCount and length > charCount:
-    res = removeSmallShapes(res, length - charCount)
-  elif charCount and length < charCount:
-    res = splitShapes(res, charCount - length)
+  #length = len(res)
+  res = removeSmallShapesForce(res)
+  if charCount and len(res) > charCount:
+    print('remove small shapes')
+    res = removeSmallShapes(res, len(res) - charCount)
+  elif charCount and len(res) < charCount:
+    print('splitShapes')
+    res = splitShapes(res, charCount - len(res))
 
   return res
 
@@ -236,8 +257,27 @@ def imageGroup(image, charCount=None, shouldSaveExample=False):
   if shouldSaveExample:
     c1 = np.array(c01)
     copy1 = deepcopy(imgCopy)
+    print(len(c1))
     cv2.drawContours(copy1, c1, -1, (67,189,66), 1)
     x2 = Image.fromarray(copy1)
     x2.save('example-findContours.png')
 
-  # return img9
+  res = []
+
+  for i in range(len(c01)):
+    shape = c01[i]
+    copy2 = deepcopy(img8)
+    im2 = Image.fromarray(copy2)
+    x = shape[0][0][0]
+    y = shape[0][0][1]
+    w = shape[2][0][0]
+    h = shape[2][0][1]
+    box = (x, y, w, h)
+    print(box)
+    im2 = im2.crop(box)
+    im2.load()
+    res.append(im2)
+    if shouldSaveExample:
+      im2.save('example-split-' + str(i) + '.png')
+
+  return res
