@@ -1,0 +1,26 @@
+{
+  "name": "captcha-reader",
+  "version": "1.0.0",
+  "description": "read simple captcha image with TensorFlow",
+  "main": "main.py",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zxdong262/captcha-reader.git"
+  },
+  "keywords": [
+    "TensorFlow",
+    "captcha"
+  ],
+  "author": "ZHAO Xudong <zxdong@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zxdong262/captcha-reader/issues"
+  },
+  "homepage": "https://github.com/zxdong262/captcha-reader#readme",
+  "dependencies": {
+    "open-sans-fonts": "1.3.1"
+  }
+}
