@@ -5,21 +5,21 @@ demo read captcha image with TensorFlow
 
 image generated:(4 or 5 char, multi-color, roate)
 
-![example-captcha.png](example-captcha.png)
+![example-captcha.png](example-images/example-captcha.png)
 
 make it binary:
 
-![example-binary.png](example-binary.png)
+![example-binary.png](example-images/example-binary.png)
 
 get shapes with opencv.findContours:
 
-![example-findContours.png](example-findContours.png)
+![example-findContours.png](example-images/example-findContours.png)
 
 split it:
-![example-split-0.png](example-split-0.png)
-![example-split-1.png](example-split-1.png)
-![example-split-2.png](example-split-2.png)
-![example-split-3.png](example-split-3.png)
+![example-split-0.png](example-images/example-split-0.png)
+![example-split-1.png](example-images/example-split-1.png)
+![example-split-2.png](example-images/example-split-2.png)
+![example-split-3.png](example-images/example-split-3.png)
 
 then feed to tensorflow.keras
 
