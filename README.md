@@ -3,7 +3,7 @@ demo read captcha image with TensorFlow
 
 ## process
 
-image generated:(4 or 5 char, multi-color, roate)
+image generated:(4 or 5 random en char or digit, multi-color, random roate 0 ~ 4 degree)
 
 ![example-captcha.png](example-images/example-captcha.png)
 
