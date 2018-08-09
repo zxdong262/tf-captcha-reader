@@ -24,13 +24,13 @@ def rgb2int(arr):
   B = arr[2]
   return R * 299/1000 + G * 587/1000 + B * 114/1000
 
-def convertToDataArray(img, shouldSave=False):
+def convertToDataArray(img, i, j, ch):
   '''
   convert image to data array
   and resize to 28*28
   '''
   BG_COLOR = (255, 255, 255)
-  base = img = Image.new('RGB', TEXT_IMAGE_SIZE, color = BG_COLOR)
+  base = Image.new('RGB', TEXT_IMAGE_SIZE, color = BG_COLOR)
   img.convert('RGB')
   size = img.size
   left = int((TEXT_IMAGE_SIZE[0] - size[0]) / 2)
@@ -38,9 +38,16 @@ def convertToDataArray(img, shouldSave=False):
   if left < 0: left = 0
   if top < 0: top = 0
   base.paste(img, box=(left, top))
-
+  shouldSave = i < 1
   if shouldSave:
-    base.save('example-resized-char.png')
+    img.save(
+      'temp/example-resized-char-b' + str(i) +
+      '-' + str(j) + '-' + ch + '.png'
+      )
+    base.save(
+      'temp/example-resized-char' + str(i) +
+      '-' + str(j) + '-' + ch +'.png'
+      )
   arr = np.array(base)
   arr = arr.reshape((TEXT_IMAGE_SIZE[0] * TEXT_IMAGE_SIZE[1], 3))
   arr1 = []
@@ -64,17 +71,18 @@ def createData(n):
     (img, text) = createImg(i)
     tlist = list(text)
     le = len(tlist)
-    shouldSave = i == 0
+    shouldSave = i > 0
     imgs = imageSplit(img, charCount=le, shouldSaveExample=shouldSave)
     for j in range(len(imgs)):
       im = imgs[j]
-      shouldSaveEg = j == 0 and shouldSave
       data.append(
-        convertToDataArray(im, shouldSave=shouldSaveEg)
+        convertToDataArray(im, i, j, tlist[j])
       )
     tlist = list(
       map(lambda x: CHAR_INDEX_DIC[x], tlist)
     )
+    # if shouldSave:
+    #   print(tlist, data)
     labels = labels + tlist
   return (np.array(data), np.array(labels))
 
@@ -83,7 +91,7 @@ def main():
 
   print('tensorflow version:', tf.__version__)
 
-  (trainData, trainLabels) = createData(5000)
+  (trainData, trainLabels) = createData(8000)
   (testData, testLabels) = createData(1000)
 
   model = keras.Sequential([
@@ -98,10 +106,16 @@ def main():
     metrics=['accuracy']
   )
 
-  model.fit(trainData, trainLabels, epochs=40)
+  model.fit(
+    trainData,
+    trainLabels,
+    epochs=25
+  )
 
   test_loss, test_acc = model.evaluate(testData, testLabels)
-  print(test_loss, test_acc)
+  print('evaluate test data set:')
+  print('test_loss:', test_loss)
+  print('test_acc:', test_acc)
 
 
 if __name__ == '__main__':

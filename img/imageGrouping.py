@@ -44,6 +44,13 @@ def getExternalBoxPoints(contour):
     [[maxX, minY]]
   ]
 
+def sortShapesByX(shape):
+  '''
+  sort shapes by min x pos
+  @return width^2 + height^2
+  '''
+  return shape[0][0][0]
+
 def sortShapes(shape):
   '''
   sort shapes by size
@@ -241,14 +248,15 @@ def imageSplit(image, charCount=None, shouldSaveExample=False):
   if shouldSaveExample:
     image.save('example-captcha.png')
 
+  imgCopy = deepcopy(image)
+  imgCopy = np.array(image)
   img8 = np.array(image.convert('L'))
+  imgCopy = deepcopy(img8)
   img8[img8 != 255] = 0
 
   if shouldSaveExample:
     x1 = Image.fromarray(img8)
     x1.save('example-binary.png')
-
-  imgCopy = deepcopy(img8)
 
   c = cv2.findContours(img8, mode=1, method=2)
   c01 = c[1]
@@ -263,10 +271,13 @@ def imageSplit(image, charCount=None, shouldSaveExample=False):
     x2.save('example-findContours.png')
 
   res = []
-
+  c01 = sorted(
+    c01,
+    key=sortShapesByX
+  )
   for i in range(len(c01)):
     shape = c01[i]
-    copy2 = deepcopy(img8)
+    copy2 = deepcopy(imgCopy)
     im2 = Image.fromarray(copy2)
     x = shape[0][0][0]
     y = shape[0][0][1]
