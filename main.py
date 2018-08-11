@@ -11,7 +11,7 @@ import tensorflow as tf
 from tensorflow import keras
 import numpy as np
 from PIL import Image
-from img.imageGenerator import createImg, TEXT_IMAGE_SIZE, CHAR_POOL, CHAR_INDEX_DIC
+from img.imageGenerator import createImg, TEXT_IMAGE_SIZE, CHAR_POOL, CHAR_INDEX_DIC, CHAR_DIC
 from img.imageGrouping import imageSplit
 
 def rgb2int(arr):
@@ -71,7 +71,7 @@ def createData(n):
     (img, text) = createImg(i)
     tlist = list(text)
     le = len(tlist)
-    shouldSave = i > 0
+    shouldSave = i == 0
     imgs = imageSplit(img, charCount=le, shouldSaveExample=shouldSave)
     for j in range(len(imgs)):
       im = imgs[j]
@@ -91,8 +91,12 @@ def main():
 
   print('tensorflow version:', tf.__version__)
 
+  print('loading data')
   (trainData, trainLabels) = createData(8000)
-  (testData, testLabels) = createData(1000)
+  (testData, testLabels) = createData(2000)
+
+  print('trainData:', len(trainData))
+  print('testData:', len(testData))
 
   model = keras.Sequential([
     keras.layers.Flatten(input_shape=TEXT_IMAGE_SIZE),
@@ -117,6 +121,25 @@ def main():
   print('test_loss:', test_loss)
   print('test_acc:', test_acc)
 
+  print('predict example-image(example-images/example-captcha.png):')
+  with Image.open('example-images/example-captcha.png') as img:
+    imgs = imageSplit(img)
+    data = []
+    i = 200
+    for j in range(len(imgs)):
+      im = imgs[j]
+      arr = convertToDataArray(im, i, j, 'unknown')
+      arr = np.expand_dims(arr, 0)
+      predictions = model.predict(arr)
+      prediction = predictions[0]
+      prediction = np.argmax(prediction)
+      char = ''
+      try:
+        char = CHAR_DIC[prediction]
+      except:
+        char = ''
+      data.append(char)
+    print(data)
 
 if __name__ == '__main__':
   main()

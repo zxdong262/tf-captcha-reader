@@ -26,14 +26,14 @@ then feed to tensorflow.keras
 result:
 ```bash
 # (trainData, trainLabels) = createData(8000)
-# (testData, testLabels) = createData(1000)
+# (testData, testLabels) = createData(2000)
 
 Epoch 25/25
-35948/35948 [==============================] - 2s 53us/step - loss: 0.0743 - acc: 0.9673
-4492/4492 [==============================] - 0s 30us/step
+36029/36029 [==============================] - 2s 54us/step - loss: 0.0752 - acc: 0.9669
+8970/8970 [==============================] - 0s 29us/step
 evaluate test data set:
-test_loss: 0.22218923419142264
-test_acc: 0.949020480854853
+test_loss: 0.28423821404674937
+test_acc: 0.9385730211817168
 ```
 
 it can be improved by add more train data or add more epochs.
