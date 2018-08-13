@@ -34,6 +34,8 @@ Epoch 25/25
 evaluate test data set:
 test_loss: 0.28423821404674937
 test_acc: 0.9385730211817168
+predict example-image(example-images/example-captcha.png):
+['l', '8', 'V', 'T']
 ```
 
 it can be improved by add more train data or add more epochs.
