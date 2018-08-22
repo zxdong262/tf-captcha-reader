@@ -45,7 +45,7 @@ it can be improved by add more train data or add more epochs.
 
 # install Helper libraries, for ubuntu 16.04 only
 sudo apt-get install python3-pip python3-tk
-pip3 install tensorflow numpy Pillow --user
+pip3 install tensorflow numpy Pillow scipy opencv --user
 
 # clone the repo
 git clone git@github.com:zxdong262/tf-captcha-reader.git

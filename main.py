@@ -41,11 +41,11 @@ def convertToDataArray(img, i, j, ch):
   shouldSave = i < 1
   if shouldSave:
     img.save(
-      'temp/example-resized-char-b' + str(i) +
+      'example-resized-char-b' + str(i) +
       '-' + str(j) + '-' + ch + '.png'
       )
     base.save(
-      'temp/example-resized-char' + str(i) +
+      'example-resized-char' + str(i) +
       '-' + str(j) + '-' + ch +'.png'
       )
   arr = np.array(base)
