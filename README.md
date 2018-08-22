@@ -48,8 +48,8 @@ sudo apt-get install python3-pip python3-tk
 pip3 install matplotlib numpy scipy matplotlib ipython jupyter pandas sympy nose --user
 
 # clone the repo
-git clone git@github.com:zxdong262/captcha-reader.git
-cd captcha-reader
+git clone git@github.com:zxdong262/tf-captcha-reader.git
+cd tf-captcha-reader
 npm i
 python3 main.py
 
