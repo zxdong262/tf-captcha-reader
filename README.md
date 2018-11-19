@@ -1,29 +1,31 @@
-# captcha-reader
-demo read captcha image with TensorFlow
 
-## process
+# tf-captcha-reader
 
-image generated:(4 or 5 random en char or digit, multi-color, random roate 0 ~ 4 degree)
+Read captcha image with TensorFlow. [Tutorial](https://html5beta.com/page/tutorial-reading-captcha-with-tensorflow.html)
+
+## Work flow
+
+Image generated:(4 or 5 random en char or digit, multi-color, random roate 0 ~ 4 degree)
 
 ![example-captcha.png](example-images/example-captcha.png)
 
-make it binary:
+Make it binary:
 
 ![example-binary.png](example-images/example-binary.png)
 
-get shapes with opencv.findContours:
+Get shapes with opencv.findContours:
 
 ![example-findContours.png](example-images/example-findContours.png)
 
-split it:
+Split it:
 ![example-split-0.png](example-images/example-split-0.png)
 ![example-split-1.png](example-images/example-split-1.png)
 ![example-split-2.png](example-images/example-split-2.png)
 ![example-split-3.png](example-images/example-split-3.png)
 
-then feed to tensorflow.keras
+Then feed to tensorflow.keras
 
-result:
+Result:
 ```bash
 # (trainData, trainLabels) = createData(8000)
 # (testData, testLabels) = createData(2000)
@@ -38,9 +40,9 @@ predict example-image(example-images/example-captcha.png):
 ['l', '8', 'V', 'T']
 ```
 
-it can be improved by add more train data or add more epochs.
+It can be improved by add more train data or add more epochs.
 
-## run
+## Run
 ```bash
 
 # install Helper libraries, for ubuntu 16.04 only
